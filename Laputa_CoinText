@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CoinText : MonoBehaviour
+{
+    public Text coinText;
+    public bool isCoinGet = false;
+    public static int totalCoin = 0;
+
+    public static CoinText instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        TextOn(); // 텍스트 보이기
+        CoinGet();// 코인 획득
+    }
+
+    void TextOn()
+    {
+        coinText.text = "  : " + totalCoin.ToString();
+    }
+
+    void CoinGet() //코인 획득
+    {
+        if(isCoinGet)
+        {
+            totalCoin += 1; //코인 갯수 하나 추가
+            isCoinGet = false; // 코인 획득 플래그 비활성화
+        }
+    }
+}
