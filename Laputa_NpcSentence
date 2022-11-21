@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NpcSentence : MonoBehaviour
+{
+    public string[] sentences;
+
+    private void OnMouseDown()
+    {
+        DialogueManager.instance.OnDialouge(sentences);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (Input.GetKeyDown(KeyCode.F)) 
+        {
+            DialogueManager.instance.OnDialouge(sentences);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))  //F키 입력 시 다음 대화 수행
+        {
+            if (!(DialogueManager.instance.isTyping))
+            {
+                DialogueManager.instance.NextSentence();
+            }
+        }
+    }
+}
