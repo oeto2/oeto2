@@ -1,0 +1,26 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BossCtrl : MonoBehaviour
+{
+    public float speed; //보스의 이동속도
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Move();
+    }
+
+    void Move()
+    {
+        this.transform.Translate(new Vector2(speed * Time.deltaTime * -1, 0));
+
+    }
+}
