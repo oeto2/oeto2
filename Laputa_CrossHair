@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+ class CrossHair : MonoBehaviour
+{
+    Transform crossPos; // 조준점 위치
+
+    Camera cam;
+
+    private void Awake()
+    {
+        cam = Camera.main;
+        crossPos = this.gameObject.transform; 
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        crossPos.transform.position = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
+                                      -cam.transform.position.z)); // 크로스 포인트 위치 설정
+    }
+}
