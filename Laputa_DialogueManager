@@ -1,0 +1,93 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+public class DialogueManager : MonoBehaviour, IPointerDownHandler
+{
+    public Text dialougeText;
+    public GameObject nextText;
+    public CanvasGroup dialougegroup;
+    public float typingSpeed = 1f;
+
+    public static DialogueManager instance;
+
+    private string currentSentence;
+    public bool isTyping;
+
+    public Queue<string> sentences; //Queue = fifo
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        sentences = new Queue<string>();
+    }
+
+    public void OnDialouge(string[] lines) //표시할 다이얼로그 메세지 텍스트를 받는 매서드
+    {
+        sentences.Clear(); //queue 내부 데이터 초기화
+
+        foreach (string line in lines) //onDialouge를 통해 받은 string문자배열 lines을 > line에다 순서대로 옮기기
+        {
+            sentences.Enqueue(line); //queue에 문자열 line 넣기
+        }
+        dialougegroup.alpha = 1;
+        dialougegroup.blocksRaycasts = true;
+
+        NextSentence();
+    }
+
+    public void NextSentence() // queue안 내부 데이터가 전부 사용될때까지 반복하는 매서드
+    {
+        if(sentences.Count != 0)
+        {
+            currentSentence = sentences.Dequeue(); //queue내부 가장 먼저들어온 데이터 반환 후 삭제
+            //코루틴
+            isTyping = true;
+            nextText.SetActive(false);
+            StartCoroutine(Typing(currentSentence));
+        }
+        else
+        {
+            dialougegroup.alpha = 0;
+            dialougegroup.blocksRaycasts = false;
+        }
+    }
+
+    IEnumerator Typing(string line)
+    {
+        dialougeText.text = "";
+        foreach(char letter in line.ToCharArray()) //ToCharArray() 문자열을 char로 반환해줌
+        {
+            dialougeText.text += letter;
+        }
+        yield return new WaitForSeconds(typingSpeed);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // dialougeText == currenSentence 대사 한줄 끝
+        if(dialougeText.text.Equals(currentSentence))
+        {
+            nextText.SetActive(true);
+            isTyping = false;
+        }
+
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if(!isTyping)
+        NextSentence();
+    }
+
+
+   
+}
