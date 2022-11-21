@@ -1,0 +1,31 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpawnManager : MonoBehaviour
+{
+    public int enemyCount;
+    public int maxCount;
+    public float spawnTime = 3f;
+    public float curTime;
+    public Transform[] spawnPoints;
+    public GameObject enemy;
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(curTime >= spawnTime && enemyCount < maxCount)
+        {
+            int x = Random.Range(0, spawnPoints.Length);
+            SpawnEnemy(x);
+        }
+        curTime += Time.deltaTime;
+    }
+
+    public void SpawnEnemy(int ranNum)
+    {
+        Instantiate(enemy, spawnPoints[ranNum]);
+        curTime = 0f;
+        enemyCount++;
+    }
+}
