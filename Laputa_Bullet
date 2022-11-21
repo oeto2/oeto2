@@ -1,0 +1,52 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class bullet : MonoBehaviour
+{
+    public float speed; //총알의 속도
+    public float distance; // 레이케스트 거리
+    public LayerMask layer; // 레이케스트 레이어
+
+    SpriteRenderer spriteRenderer;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Invoke("DestroyBullet", 2); // 특정 시간 후 함수 실행
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(transform.position, transform.right,distance,layer);
+        if(ray.collider != null) //레이캐스트 히트
+        {
+            if(ray.collider.tag == "Enemy") //레이캐스트 적 태그가 Enemy일시
+            {
+                Debug.Log("명중");
+            }
+            Invoke("DestroyBullet", 0.03f);
+        }
+        transform.Translate(Vector2.right * speed * Time.deltaTime); //총알 속도
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Enemy"))
+        {
+            collision.GetComponent<Enemy>().TakeDamage(1); // 충돌 데미지
+        }
+    }
+
+    void DestroyBullet()
+    {
+        Destroy(gameObject);
+    }
+
+}
