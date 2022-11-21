@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameManager : MonoBehaviour
+{
+    public int[] transfer = new int[5]; //탈것 배열 생성
+    public GameObject curTransfer;
+    public int wearTransfer; //현재 착용중인 탈것
+
+    public static GameManager instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        for (int i = 0; i < transfer.Length; i++)
+        {
+            transfer[i] = i;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (curTransfer.tag == "Wood")
+        {
+            //Debug.Log("탈것 : 나무판자");
+            wearTransfer = 0;
+        }
+       // IsHudleHit(); //장애물 충돌시
+    }
+
+    }
