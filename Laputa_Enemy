@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    public GameObject hudDamageText;
+    public Transform hudPos;
+    public int hp = 3;
+    public static Enemy instance;
+    public float speed = 1;
+    int moveX = -1;
+    bool isDone = true;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    private void Update()
+    {
+        Move();
+        if(isDone)
+        {
+            StartCoroutine("MoveDone");
+        }
+
+        if (hp <= 0)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    void Move()
+    {
+        this.transform.Translate(new Vector2(moveX * speed * Time.deltaTime, 0));
+    }
+
+    IEnumerator MoveDone()
+    {
+        int x = Random.Range(1, 5);
+        speed = Random.Range(1, 10);
+        isDone = false;
+        yield return new WaitForSeconds(x);
+        TurnMove();
+        isDone = true;
+    }
+
+    void TurnMove()
+    {
+        moveX *= -1;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        GameObject hudText = Instantiate(hudDamageText);
+        hudText.transform.position = hudPos.position;
+        hudText.GetComponent<DamageText>().damage = damage;
+        hp -= damage;
+    }
+}
