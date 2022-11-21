@@ -1,0 +1,131 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerCtrl : MonoBehaviour
+{
+    public float jumpPower; //플레이어 JumpPower
+    public float playerSpeed = 10f; //플레이어 속도
+    public bool isControl; //플레이어 움직임 제어 플래그 
+
+    #region 점프 감지
+    [SerializeField]
+    Transform pos;
+    [SerializeField]
+    float checkRadius;
+    [SerializeField]
+    LayerMask islayer;
+
+    public int jumpCount;
+
+    [SerializeField]
+    int jumpCnt;
+
+    bool isGround;
+    #endregion
+
+
+    public bool playerLeft = false;
+    public bool playerRight = false;
+
+    public static PlayerCtrl instance;
+
+    public Transform playerTr;
+
+    SpriteRenderer spriteRenderer;
+    Animator anim;
+
+    Rigidbody2D rigid;
+
+    public float moveSpeed = 0.1f;
+
+    private void Awake()
+    {
+        instance = this;
+        rigid = GetComponent<Rigidbody2D>(); // Rigidbody2D 컴포넌트
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        isControl = true;
+        jumpCnt = jumpCount;
+    }
+
+    private void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.eulerAngles = new Vector3(0, 0, 0); //transform 각도 변경
+            anim.SetBool("IsWalking", true);
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            transform.eulerAngles = new Vector3(0, 180, 0);
+            anim.SetBool("IsWalking", true);
+        }
+        else
+        {
+            anim.SetBool("IsWalking", false);
+        }
+
+        if(anim.GetBool("IsJumping") == true) //점프중일시 이동모션 강제종료
+        {
+            anim.SetBool("IsWalking", false);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isControl)
+        {
+            #region 이동
+            UserMove(); //캐릭터 이동
+            UserJump(); //캐릭터 점프
+            #endregion 
+        }
+    }
+
+    void UserMove() //플레이어 이동
+    {
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(new Vector3(1f * playerSpeed * Time.deltaTime, 0, 0));
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(new Vector3(1f * playerSpeed * Time.deltaTime, 0, 0));
+        }
+    }
+
+    void UserJump() //플레이어 점프
+    {
+        isGround = Physics2D.OverlapCircle(pos.position, checkRadius, islayer);
+        if (isGround == true && Input.GetButtonDown("Jump") && jumpCnt > 0) //Jump 버튼이 눌리면
+        {
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // 윗방향으로 jumpPower만큼 힘을 줌
+        }
+        if (isGround == false && Input.GetButtonDown("Jump") && jumpCnt > 0) //Jump 버튼이 눌리면
+        {
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // 윗방향으로 jumpPower만큼 힘을 줌
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            jumpCnt--;
+        }
+        if (isGround)
+        {
+            jumpCnt = jumpCount;
+            anim.SetBool("IsJumping", false);
+        }
+        if(jumpCnt > 0 && Input.GetButtonDown("Jump"))
+        {
+            anim.SetBool("IsJumping", true);
+        }
+    }
+}
+
